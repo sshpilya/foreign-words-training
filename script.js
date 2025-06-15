@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const examCardsContainer = document.getElementById('exam-cards');
   const studyModeElement = document.getElementById('study-mode');
   const examModeElement = document.getElementById('exam-mode');
+  const sliderElement = document.getElementById('slider');
   const correctPercentElement = document.getElementById('correct-percent');
   const timeElement = document.getElementById('time');
   const flipCard = document.querySelector('.flip-card');
@@ -73,11 +74,13 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
 
-    const allCards = [...words, ...words].map((word, index) => ({
+    const allCards = [...words, ...words]
+    .map((word, index) => ({
       id: index < words.length ? index : index - words.length,
       text: index < words.length ? word.foreign : word.native,
       type: index < words.length ? 'foreign' : 'native'
-    })).sort(() => Math.random() - 0.5);
+    }))
+    .sort(() => Math.random() - 0.5);
 
     allCards.forEach(card => {
       const cardElement = document.createElement('div');
@@ -98,17 +101,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (selectedCards.length === 2) {
         const [firstCard, secondCard] = selectedCards;
-        const firstCardId = parseInt(firstCard.dataset.id);
-        const secondCardId = parseInt(secondCard.dataset.id);
+        const firstCardId = +firstCard.dataset.id;
+        const secondCardId = +secondCard.dataset.id;
 
-        if (firstCardId === secondCardId && firstCard.dataset.
-
-        type !== secondCard.dataset.type) {
+        if (firstCardId === secondCardId && firstCard.dataset.type !== secondCard.dataset.type) {
           setTimeout(() => {
-            firstCard.classList.add('fade-out');
-            secondCard.classList.add('fade-out');
-            correctPairs++;
-            correctPercentElement.textContent = `${Math.round((correctPairs / words.length) * 100)}%`;
+            firstCard.classList.add('correct');
+            secondCard.classList.add('correct');
+            setTimeout(() => {
+              firstCard.classList.add('fade-out');
+              secondCard.classList.add('fade-out');
+            
+              correctPairs++;
+              correctPercentElement.textContent = `${Math.round((correctPairs / words.length) * 100)}%`;
 
             if (correctPairs === words.length) {
               clearInterval(timerInterval);
@@ -116,7 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             selectedCards = [];
-          }, 500);
+            }, 500);
+          }, 500);  
         } else {
           setTimeout(() => {
             firstCard.classList.remove('correct');
@@ -140,9 +146,8 @@ document.addEventListener('DOMContentLoaded', function() {
     timeElement.textContent = `${minutes}:${seconds}`;
   }
 
-  shuffleButton.addEventListener('click', function() {
+   shuffleButton.addEventListener('click', function() {
     words.sort(() => Math.random() - 0.5);
-    currentWordIndex = 0;
     updateWord();
   });
 
